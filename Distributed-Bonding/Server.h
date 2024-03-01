@@ -34,6 +34,8 @@ private:
 	int port;
 	SOCKET m_Hydrogen;
 	SOCKET m_Oxygen;
+	boolean H_binded;
+	boolean O_binded;
 	int H20_bonded;
 
 	std::vector<SOCKET> connected_clients;
@@ -54,6 +56,6 @@ private:
 	void listener();
 	void processor();
 	void bonding();
-	void send();
+	void notify_clients();
 };
 

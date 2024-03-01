@@ -183,7 +183,7 @@ void Server::bonding(){
 	}
 }
 
-void Server::send()
+void Server::notify_clients()
 {
 	while (isRunning) {
 		if (!send_queue.empty()) {
