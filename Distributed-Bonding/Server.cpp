@@ -128,9 +128,11 @@ void Server::processor()
 
 			// Process the message
 			if (message[0] == 'H') {
+				std::cout << message << " Requesting bond" << std::endl;
 				hydrogen.push(message);
 			}
 			else if (message[0] == 'O') {
+				std::cout << message << " Requesting bond" << std::endl;
 				oxygen.push(message);
 			}
 			else {
