@@ -53,6 +53,14 @@ Server::~Server()
 
 void Server::start()
 {
+	isRunning = true;
+	std::cout << "Server started" << std::endl;
+
+	// Start the listener thread
+	m_listenThread = std::thread(&Server::listener, this);
+
+	// Wait for the listener thread to finish
+	m_listenThread.join();
 }
 
 void Server::listener()
