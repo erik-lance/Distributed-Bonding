@@ -126,6 +126,9 @@ void Server::processor()
 			std::string message = message_queue.front();
 			message_queue.pop();
 
+			// Message is in the format "Hydrogen:1 Request" or "Oxygen:1 Request" Removes " Request"
+			message.erase(message.find(" Request"));
+
 			// Process the message
 			if (message[0] == 'H') {
 				std::cout << message << " Requesting bond" << std::endl;
