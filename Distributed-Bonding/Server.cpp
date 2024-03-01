@@ -115,3 +115,25 @@ void Server::listener()
 		}
 	}
 }
+
+void Server::processor()
+{
+	while (isRunning) {
+		if (!message_queue.empty())
+		{
+			std::string message = message_queue.front();
+			message_queue.pop();
+
+			// Process the message
+			if (message[0] == 'H') {
+				hydrogen.push(message);
+			}
+			else if (message[0] == 'O') {
+				oxygen.push(message);
+			}
+			else {
+				std::cerr << "Invalid message received: " << message << std::endl;
+			}
+		}
+	}
+}
