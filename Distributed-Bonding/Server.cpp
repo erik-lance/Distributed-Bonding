@@ -55,6 +55,7 @@ void Server::start()
 {
 	isRunning = true;
 	std::cout << "Server started" << std::endl;
+	H20_bonded = 0;
 	// Start the listener thread
 	m_listenThread = std::thread(&Server::listener, this);
 	m_processorThread = std::thread(&Server::processor, this);
@@ -156,6 +157,8 @@ void Server::bonding(){
 			std::cout << h1 << "bonded" << std::endl;
 			std::cout << h2 << "bonded" << std::endl;
 			std::cout << o << "bonded" << std::endl;
+
+			H20_bonded++;
 		}
 	}
 }

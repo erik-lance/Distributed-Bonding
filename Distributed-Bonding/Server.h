@@ -32,6 +32,7 @@ private:
 	sockaddr_in m_addr;
 	std::string host;
 	int port;
+	int H20_bonded;
 
 	std::vector<SOCKET> connected_clients;
 	std::vector<bool> socket_done = std::vector<bool>(2, false);
