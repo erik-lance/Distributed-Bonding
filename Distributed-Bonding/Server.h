@@ -39,7 +39,7 @@ private:
 	// Threads
 	std::thread m_listenThread;
 	std::thread m_sendThread;
-	std::thread m_processorThreads;
+	std::thread m_processorThread;
 
 	// Queues
 	std::queue<std::string> message_queue;
