@@ -2,12 +2,7 @@
 #include "Client.h"
 
 Client::Client(int type) {
-	if (type == 0) {
-		this->isHydrogen = true;
-	}
-	else {
-		this->isHydrogen = false;
-	}
+	prepareMolecules(type);
 
 	// Setup Winsock
 	#ifdef _WIN32
@@ -89,9 +84,20 @@ void Client::run()
 	m_thread.join();
 }
 
-
+/**
+ * Prepares the molecules to be sent to the server
+ * @param type 0 for hydrogen, 1 for oxygen
+ */
 void Client::prepareMolecules(int type)
 {
+	if (type == 0) {
+		this->isHydrogen = true;
+		molecules = 1000;
+	}
+	else {
+		this->isHydrogen = false;
+		molecules = 500;
+	}
 }
 
 /**
