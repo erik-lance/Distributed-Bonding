@@ -44,6 +44,7 @@ private:
 
 	// Queues
 	std::queue<std::string> message_queue;
+	std::queue<std::string> send_queue;
 	std::queue<std::string> hydrogen;
 	std::queue<std::string> oxygen;
 

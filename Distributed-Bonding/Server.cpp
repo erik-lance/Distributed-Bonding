@@ -160,8 +160,12 @@ void Server::bonding(){
 			std::cout << h1 << "bonded" << std::endl;
 			std::cout << h2 << "bonded" << std::endl;
 			std::cout << o << "bonded" << std::endl;
-
 			H20_bonded++;
+
+			//sends message to client
+			send_queue.push(h1);
+			send_queue.push(h2);
+			send_queue.push(o);
 		}
 	}
 }
