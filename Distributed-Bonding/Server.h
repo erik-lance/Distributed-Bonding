@@ -49,5 +49,6 @@ private:
 	bool isRunning = false;
 	void listener();
 	void processor();
+	void bonding();
 };
 

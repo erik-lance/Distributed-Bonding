@@ -55,7 +55,6 @@ void Server::start()
 {
 	isRunning = true;
 	std::cout << "Server started" << std::endl;
-
 	// Start the listener thread
 	m_listenThread = std::thread(&Server::listener, this);
 	m_processorThread = std::thread(&Server::processor, this);
@@ -138,6 +137,25 @@ void Server::processor()
 			else {
 				std::cerr << "Invalid message received: " << message << std::endl;
 			}
+		}
+	}
+}
+
+void Server::bonding(){
+	while (isRunning) {
+		if (hydrogen.size() >= 2 && !oxygen.empty()) {
+
+			std::string h1 = hydrogen.front();
+			hydrogen.pop();
+			std::string h2 = hydrogen.front();
+			hydrogen.pop();
+
+			std::string o = oxygen.front();
+			oxygen.pop();
+
+			std::cout << h1 << "bonded" << std::endl;
+			std::cout << h2 << "bonded" << std::endl;
+			std::cout << o << "bonded" << std::endl;
 		}
 	}
 }
