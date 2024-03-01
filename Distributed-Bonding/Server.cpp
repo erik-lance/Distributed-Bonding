@@ -169,3 +169,12 @@ void Server::bonding(){
 		}
 	}
 }
+
+void Server::send()
+{
+	while (isRunning) {
+		if (!send_queue.empty()) {
+			
+		}
+	}
+}

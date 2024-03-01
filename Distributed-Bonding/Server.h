@@ -52,5 +52,6 @@ private:
 	void listener();
 	void processor();
 	void bonding();
+	void send();
 };
 
