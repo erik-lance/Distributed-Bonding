@@ -60,6 +60,9 @@ void Client::run()
 	std::cout << "Host: " << inet_ntoa(m_addr.sin_addr) << std::endl;
 	std::cout << "Port: " << ntohs(m_addr.sin_port) << std::endl;
 
+	// Start the listener thread
+	m_thread = std::thread(&Client::listener, this);
+
 	while (isRunning)
 	{
 		std::cout << "\nBegin requesting data from server" << std::endl;
@@ -81,9 +84,39 @@ void Client::run()
 		}
 			
 	}
+
+	// Join the thread
+	m_thread.join();
 }
 
 
 void Client::prepareMolecules(int type)
 {
+}
+
+/**
+ * Simply listens to requests from the server so that it can receive messages
+ * as it is sending molecules concurrently.
+ */
+void Client::listener()
+{
+	while (isRunning) {
+		char buffer[1024];
+		memset(buffer, 0, 1024);
+
+		int bytesReceived = recv(m_socket, buffer, 1024, 0);
+		if (bytesReceived == -1)
+		{
+			std::cerr << "Error in recv(). Quitting" << std::endl;
+			break;
+		}
+
+		if (bytesReceived == 0)
+		{
+			std::cout << "Server disconnected" << std::endl;
+			break;
+		}
+
+		std::cout << std::string(buffer, bytesReceived) << std::endl;
+	}
 }
