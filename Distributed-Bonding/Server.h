@@ -23,14 +23,18 @@
 class Server
 {
 public:
-	Server();
+	Server(std::string hostname, int portNum);
 	~Server();
 
-	void init(std::string host, int port);
 	void start();
 private:
 	SOCKET m_socket;
 	sockaddr_in m_addr;
+	std::string host;
+	int port;
+
+	std::vector<SOCKET> connected_clients;
+	std::vector<bool> socket_done = std::vector<bool>(2, false);
 
 	// Threads
 	std::thread m_listenThread;
