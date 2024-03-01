@@ -22,6 +22,9 @@ class Client {
 public:
 	Client(int m_type);
 	~Client();
+
+	void init(std::string host, int port);
+	
 private:
 	SOCKET m_socket;
 	sockaddr_in m_addr;
@@ -32,6 +35,5 @@ private:
 	int molecules = 0;
 
 	bool isRunning = false;
-	void init();
 	void prepareMolecules(int type);
 };
