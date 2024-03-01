@@ -65,4 +65,53 @@ void Server::start()
 
 void Server::listener()
 {
+	int MAX_BUFFER = 1024;
+	std::vector<char> buffer(MAX_BUFFER);
+	while (isRunning)
+	{
+		// Wait for a connection
+
+		for (int i = 0; i < connected_clients.size(); i++) {
+			SOCKET server_socket = connected_clients[i];
+
+			if (socket_done[i]) { continue; }
+
+			//clear the buffer
+			buffer.clear();
+			buffer.resize(MAX_BUFFER);
+
+			int bytes_received = recv(server_socket, buffer.data(), buffer.size(), 0);
+
+			if (bytes_received < 0) {
+				#ifdef _WIN32
+					int error_code = WSAGetLastError();
+					if (error_code != WSAEWOULDBLOCK) {
+						char error[1024];
+						strerror_s(error, sizeof(error), error_code);
+						std::cerr << "[" << error_code << "] Error receiving message: " << error << std::endl;
+						exit(1);
+					}
+					else {
+						continue;
+					}
+				#else
+					if (errno != EWOULDBLOCK && errno != EAGAIN) {
+						char error[1024];
+						strerror_r(errno, error, sizeof(error));
+						std::cerr << "Error receiving message: " << error << std::endl;
+						exit(1);
+					}
+				#endif
+			}
+			
+			// Hydrogen molecule: "H:#Request Number" (e.g. "H: 1")
+			// Oxygen molecule: "O:#Request Number" (e.g. "O: 1")
+
+			//Add message to queue
+			std::string message = std::string(buffer.data(), bytes_received);
+
+			message_queue.push(message);
+
+		}
+	}
 }
