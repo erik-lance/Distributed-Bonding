@@ -32,6 +32,8 @@ private:
 	sockaddr_in m_addr;
 	std::string host;
 	int port;
+	SOCKET m_Hydrogen;
+	SOCKET m_Oxygen;
 	int H20_bonded;
 
 	std::vector<SOCKET> connected_clients;

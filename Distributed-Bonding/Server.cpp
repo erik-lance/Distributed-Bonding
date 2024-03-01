@@ -4,6 +4,8 @@ Server::Server(std::string hostname, int portNum)
 {
 	this->host = hostname;
 	this->port = portNum;
+	H_binded = false;
+	O_binded = false;
 
 	// Setup Winsock
 	#ifdef _WIN32
@@ -112,6 +114,17 @@ void Server::listener()
 			//Add message to queue
 			std::string message = std::string(buffer.data(), bytes_received);
 
+			//Remembers the socket for the molecules
+			if (H_binded && message[0] == 'H') {
+				m_Hydrogen = server_socket;
+				H_binded = true;
+			}
+			else if (O_binded && message[0] == 'O') {
+				m_Oxygen = server_socket;
+				O_binded = true;
+			}
+
+
 			message_queue.push(message);
 
 		}
@@ -174,7 +187,7 @@ void Server::send()
 {
 	while (isRunning) {
 		if (!send_queue.empty()) {
-			
+
 		}
 	}
 }
