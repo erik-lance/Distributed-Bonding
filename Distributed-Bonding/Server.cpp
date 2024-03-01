@@ -58,9 +58,11 @@ void Server::start()
 
 	// Start the listener thread
 	m_listenThread = std::thread(&Server::listener, this);
+	m_processorThread = std::thread(&Server::processor, this);
 
 	// Wait for the listener thread to finish
 	m_listenThread.join();
+	m_processorThread.join();
 }
 
 void Server::listener()

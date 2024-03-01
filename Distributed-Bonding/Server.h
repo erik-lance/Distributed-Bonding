@@ -39,6 +39,7 @@ private:
 	// Threads
 	std::thread m_listenThread;
 	std::thread m_sendThread;
+	std::thread m_processorThreads;
 
 	// Queues
 	std::queue<std::string> message_queue;
@@ -47,5 +48,6 @@ private:
 
 	bool isRunning = false;
 	void listener();
+	void processor();
 };
 
