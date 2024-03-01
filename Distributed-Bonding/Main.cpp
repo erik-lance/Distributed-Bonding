@@ -1,6 +1,5 @@
 #include "Main.h"
 #include "Client.h"
-#include "Globals.h"
 
 // Type of Machine (0 - Client, 1 - Server)
 constexpr int MACHINE_TYPE = 0;
