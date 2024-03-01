@@ -2,7 +2,12 @@
 #include "Client.h"
 
 Client::Client(int type) {
-	prepareMolecules(type);
+	if (type == 0) {
+		this->isHydrogen = true;
+	}
+	else {
+		this->isHydrogen = false;
+	}
 
 	// Setup Winsock
 	#ifdef _WIN32
@@ -36,6 +41,46 @@ void Client::init(std::string host, int port)
 	m_addr.sin_family = AF_INET;
 	m_addr.sin_port = htons(port);
 	InetPtonA(AF_INET, host.c_str(), &m_addr.sin_addr);
+}
+
+void Client::run()
+{
+	isRunning = true;
+	
+	std::cout << "Connecting to server..." << std::endl;
+
+	// Connect to the server
+	if (connect(m_socket, (struct sockaddr*)&m_addr, sizeof(m_addr)) == -1)
+	{
+		std::cerr << "Error connecting to server" << std::endl;
+		exit(1);
+	}
+
+	std::cout << "Connected to server" << std::endl;
+	std::cout << "Host: " << inet_ntoa(m_addr.sin_addr) << std::endl;
+	std::cout << "Port: " << ntohs(m_addr.sin_port) << std::endl;
+
+	while (isRunning)
+	{
+		std::cout << "\nBegin requesting data from server" << std::endl;
+		std::string molecule_type = isHydrogen ? "Hydrogen" : "Oxygen";
+
+
+		std::cout << "Moleceule Type: " << molecule_type << std::endl;
+
+		// Send molecules to the server
+		for (int i = 0; i < molecules; i++) {
+			std::string message = molecule_type[0] + (i+1)+ " Request";
+			int sent = send(m_socket, message.c_str(), message.size() + 1, 0);
+
+			if (sent < 0)
+			{
+				std::cerr << "Error sending message to server" << std::endl;
+				exit(1);
+			}
+		}
+			
+	}
 }
 
 

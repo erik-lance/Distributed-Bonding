@@ -24,7 +24,7 @@ public:
 	~Client();
 
 	void init(std::string host, int port);
-	
+	void run();
 private:
 	SOCKET m_socket;
 	sockaddr_in m_addr;
@@ -33,6 +33,7 @@ private:
 	std::chrono::steady_clock::time_point start;
 	std::chrono::steady_clock::time_point end;
 	int molecules = 0;
+	bool isHydrogen = false;
 
 	bool isRunning = false;
 	void prepareMolecules(int type);
