@@ -1,23 +1,31 @@
 #include "Main.h"
 #include "Client.h"
-
-// Type of Machine (0 - Client, 1 - Server)
-constexpr int MACHINE_TYPE = 0;
-constexpr int MOLECULE_TYPE = 0; // (For client, 0 - H, 1 - O)
+#include <iostream>
 
 // Master Server
 std::string MASTER_HOST = "192.168.1.5";
 int MASTER_PORT = 5000;
 
+int main()
+{
+	int machineType;
 
-int main() {
-	if (MACHINE_TYPE == 0) {
-		Client client(MOLECULE_TYPE);
-		client.init(MASTER_HOST, MASTER_PORT);
-	} else {
-		//Server server;
-		//server.run();
+	std::cout << "Enter the machine type (0 - Client, 1 - Server): ";
+	std::cin >> machineType;
+
+	if (machineType == 1)
+	{
+		// Server server;
+		// server.run();
 	}
-	return 0;
+	else
+	{
+		int moleculeType;
+		std::cout << "Enter the molecule type (0 - H, 1 - O): ";
+		std::cin >> moleculeType;
+		Client client(moleculeType);
+		client.init(MASTER_HOST, MASTER_PORT);
+	}
 
+	return 0;
 }
