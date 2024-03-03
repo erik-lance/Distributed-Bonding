@@ -44,8 +44,11 @@ Server::Server(std::string hostname, int portNum)
 		exit(1);
 	}
 
+	std::cout << "Server waiting for 2 connections" << std::endl;
 	// Accept two connections
 	connected_clients.push_back(accept(m_socket, NULL, NULL));
+
+	std::cout << "Server waiting for 1 more connection" << std::endl;
 	connected_clients.push_back(accept(m_socket, NULL, NULL));
 }
 
