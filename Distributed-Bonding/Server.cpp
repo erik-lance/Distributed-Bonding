@@ -62,9 +62,10 @@ void Server::start()
 {
 	isRunning = true;
 	std::cout << "Server started" << std::endl;
-	// Start the listener thread
+	// Start the threads
 	m_listenThread = std::thread(&Server::listener, this);
 	m_processorThread = std::thread(&Server::processor, this);
+	m_sendThread = std::thread(&Server::notify_clients, this);
 
 	// Bonding done on main thread
 	bonding();
@@ -72,6 +73,7 @@ void Server::start()
 	// Wait for the listener thread to finish
 	m_listenThread.join();
 	m_processorThread.join();
+	m_sendThread.join();
 }
 
 void Server::listener()
