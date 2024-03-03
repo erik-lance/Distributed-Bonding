@@ -195,11 +195,11 @@ void Server::notify_clients()
 			send_queue.pop();
 
 			if (message[0] == 'H') {
-				int sent = send(m_Hydrogen, message.c_str(), message.size() + 1, 0);
+				int sent = send(m_Hydrogen, message.c_str(), message.size(), 0);
 				
 			}
 			else if (message[0] == 'O') {
-				int sent = send(m_Oxygen, message.c_str(), message.size() + 1, 0);
+				int sent = send(m_Oxygen, message.c_str(), message.size(), 0);
 			}
 			else {
 				std::cerr << "Invalid message to send: " << message << std::endl;
