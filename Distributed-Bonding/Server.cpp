@@ -157,17 +157,8 @@ void Server::listener()
 				// Push 
 				for (std::string msg : split_messages) { 
 					if (msg[0] != 'H' && msg[0] != 'O') {
-						std::cerr << "Invalid message received: " << msg << std::endl;
-						continue;
-					}
-
-					if (msg[0] == 'H') { 
-						received_h++; 
-						if (received_h == 1000) socket_done[i] = true;
-					}
-					else { 
-						received_o++; 
-						if (received_o == 500) socket_done[i] = true;
+						// Message is Done
+						socket_done[i] = true;
 					}
 
 					mtx.lock();

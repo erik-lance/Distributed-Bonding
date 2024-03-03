@@ -36,8 +36,6 @@ private:
 	SOCKET m_Oxygen;
 	boolean H_binded;
 	boolean O_binded;
-	int received_h = 0;
-	int received_o = 0;
 	int H20_bonded = 0;
 
 	std::vector<SOCKET> connected_clients;
