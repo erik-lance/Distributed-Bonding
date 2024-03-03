@@ -68,25 +68,23 @@ void Client::run()
 
 	char m_type = isHydrogen ? 'H' : 'O';
 
-	while (isRunning)
+	// Send molecules to the server
+	for (int i = 0; i < molecules; i++)
 	{
-		// Send molecules to the server
-		for (int i = 0; i < molecules; i++)
-		{
-			int m_number = i + 1;
-			// (H0 Request / O0 Request)
-			// m_type+m_number+" Request"
-			std::string message = m_type + std::to_string(m_number) + " Request";
-			int sent = send(m_socket, message.c_str(), message.size() + 1, 0);
+		int m_number = i + 1;
+		// (H0 Request / O0 Request)
+		// m_type+m_number+" Request"
+		std::string message = m_type + std::to_string(m_number) + " Request";
+		int sent = send(m_socket, message.c_str(), message.size() + 1, 0);
 
-			if (sent < 0)
-			{
-				std::cerr << "Error sending message to server" << std::endl;
-				exit(1);
-			}
+		if (sent < 0)
+		{
+			std::cerr << "Error sending message to server" << std::endl;
+			exit(1);
 		}
 	}
 
+	// Wait until the server is done
 	// Join the thread
 	m_thread.join();
 }
