@@ -6,7 +6,7 @@ Server::Server(std::string hostname, int portNum)
 	this->port = portNum;
 	H_binded = false;
 	O_binded = false;
-
+	H20_bonded = 0;
 	// Setup Winsock
 	#ifdef _WIN32
 		WSADATA wsa_data;
@@ -57,7 +57,6 @@ void Server::start()
 {
 	isRunning = true;
 	std::cout << "Server started" << std::endl;
-	H20_bonded = 0;
 	// Start the listener thread
 	m_listenThread = std::thread(&Server::listener, this);
 	m_processorThread = std::thread(&Server::processor, this);
