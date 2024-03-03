@@ -73,8 +73,9 @@ void Server::start()
 
 void Server::listener()
 {
-	int MAX_BUFFER = 1024;
+	int MAX_BUFFER = 256;
 	std::vector<char> buffer(MAX_BUFFER);
+	std::vector<std::string> fragments = std::vector<std::string>(2, "");
 	while (isRunning)
 	{
 		// Wait for a connection
@@ -83,10 +84,6 @@ void Server::listener()
 			SOCKET server_socket = connected_clients[i];
 
 			if (socket_done[i]) { continue; }
-
-			//clear the buffer
-			buffer.clear();
-			buffer.resize(MAX_BUFFER);
 
 			int bytes_received = recv(server_socket, buffer.data(), buffer.size(), 0);
 
@@ -111,14 +108,24 @@ void Server::listener()
 					}
 				#endif
 			}
-			
+
 			// Hydrogen molecule: "H:#Request Number" (e.g. "H: 1")
 			// Oxygen molecule: "O:#Request Number" (e.g. "O: 1")
 
 			//Add message to queue
+
+			// Check if message is fragmented or not by looking
+			// if there is a null terminator in the message
+			// and split the message if necessary
 			std::string message = std::string(buffer.data(), bytes_received);
 
-			//Remembers the socket for the molecules
+			// If fragment is not empty, append the message to the fragment
+			if (fragments[i].size() > 0) {
+				message = fragments[i] + message;
+			}
+
+			// Remembers the socket for the molecules
+			// the first message will usually never be fragmented
 			if (!H_binded && message[0] == 'H') {
 				m_Hydrogen = server_socket;
 				H_binded = true;
@@ -128,9 +135,39 @@ void Server::listener()
 				O_binded = true;
 			}
 
+			// If null terminator is found, split the message
+			if (message.find('\0') != std::string::npos) {
+				// Based on buffer size, could receive a message such as
+				// H0 Request\0H2 Request\0H3 Request\0
+				// So we split the message into individual messages
+				std::vector<std::string> split_messages;
 
-			message_queue.push(message);
+				// Split all the messages with null terminators to split_messages
+				while (message.find('\0') != std::string::npos) {
+					std::string split = message.substr(0, message.find('\0'));
+					split_messages.push_back(split);
+					message = message.substr(message.find('\0') + 1); // Remove the message from the buffer
+				}
 
+				// Push 
+				for (std::string msg : split_messages) { 
+					if (msg[0] != 'H' && msg[0] != 'O') {
+						std::cerr << "Invalid message received: " << msg << std::endl;
+						continue;
+					}
+					mtx.lock();
+					std::cout << msg << std::endl;
+					message_queue.push(msg);
+					mtx.unlock();
+				}
+
+				// We do not clear the buffer because we want to keep the last fragment
+				// in case the message is fragmented
+				fragments[i] = message;
+			}
+			else {
+				std::cout << "Buffer without null terminator: " << message << std::endl;
+			}
 		}
 	}
 }
@@ -140,8 +177,10 @@ void Server::processor()
 	while (isRunning) {
 		if (!message_queue.empty())
 		{
+			mtx.lock();
 			std::string message = message_queue.front();
 			message_queue.pop();
+			mtx.unlock();
 
 			// Message is in the format "Hydrogen:1 Request" or "Oxygen:1 Request" Removes " Request"
 			message = message.substr(0, message.find(" Request"));

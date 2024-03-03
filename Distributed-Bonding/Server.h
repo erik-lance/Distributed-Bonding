@@ -51,6 +51,7 @@ private:
 	std::queue<std::string> send_queue;
 	std::queue<std::string> hydrogen;
 	std::queue<std::string> oxygen;
+	std::mutex mtx;
 
 	bool isRunning = false;
 	void listener();
