@@ -160,14 +160,22 @@ void Server::listener()
 						std::cerr << "Invalid message received: " << msg << std::endl;
 						continue;
 					}
+
+					if (msg[0] == 'H') { 
+						received_h++; 
+						if (received_h == 1000) socket_done[i] = true;
+					}
+					else { 
+						received_o++; 
+						if (received_o == 500) socket_done[i] = true;
+					}
+
 					mtx.lock();
 					std::cout << msg << std::endl;
 					message_queue.push(msg);
 					mtx.unlock();
 				}
 
-				// We do not clear the buffer because we want to keep the last fragment
-				// in case the message is fragmented
 				fragments[i] = message;
 			}
 			else {
@@ -229,6 +237,11 @@ void Server::bonding(){
 			send_queue.push(h2);
 			send_queue.push(o);
 			send_mtx.unlock();
+
+			if (H20_bonded == 500) {
+				isRunning = false;
+				send_queue.push("Done");
+			}
 		}
 	}
 }
