@@ -1,19 +1,18 @@
 #include "Client.h"
-#include "Client.h"
 
 Client::Client(int type)
 {
 	prepareMolecules(type);
 
-// Setup Winsock
-#ifdef _WIN32
-	WSADATA wsa_data;
-	if (WSAStartup(MAKEWORD(2, 2), &wsa_data) != 0)
-	{
-		std::cerr << "Error initializing Winsock" << std::endl;
-		exit(1);
-	}
-#endif
+	// Setup Winsock
+	#ifdef _WIN32
+		WSADATA wsa_data;
+		if (WSAStartup(MAKEWORD(2, 2), &wsa_data) != 0)
+		{
+			std::cerr << "Error initializing Winsock" << std::endl;
+			exit(1);
+		}
+	#endif
 }
 
 Client::~Client()
@@ -67,12 +66,17 @@ void Client::run()
 
 	std::cout << "Moleceule Type: " << molecule_type << std::endl;
 
+	char m_type = isHydrogen ? 'H' : 'O';
+
 	while (isRunning)
 	{
 		// Send molecules to the server
 		for (int i = 0; i < molecules; i++)
 		{
-			std::string message = molecule_type[0] + (i + 1) + " Request";
+			int m_number = i + 1;
+			// (H0 Request / O0 Request)
+			// m_type+m_number+" Request"
+			std::string message = m_type + std::to_string(m_number) + " Request";
 			int sent = send(m_socket, message.c_str(), message.size() + 1, 0);
 
 			if (sent < 0)
