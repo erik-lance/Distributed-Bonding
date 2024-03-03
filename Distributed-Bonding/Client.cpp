@@ -62,13 +62,13 @@ void Client::run()
 	// Start the listener thread
 	m_thread = std::thread(&Client::listener, this);
 
+	std::cout << "\nBegin requesting data from server" << std::endl;
+	std::string molecule_type = isHydrogen ? "Hydrogen" : "Oxygen";
+
+	std::cout << "Moleceule Type: " << molecule_type << std::endl;
+
 	while (isRunning)
 	{
-		std::cout << "\nBegin requesting data from server" << std::endl;
-		std::string molecule_type = isHydrogen ? "Hydrogen" : "Oxygen";
-
-		std::cout << "Moleceule Type: " << molecule_type << std::endl;
-
 		// Send molecules to the server
 		for (int i = 0; i < molecules; i++)
 		{
