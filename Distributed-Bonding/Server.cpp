@@ -119,11 +119,11 @@ void Server::listener()
 			std::string message = std::string(buffer.data(), bytes_received);
 
 			//Remembers the socket for the molecules
-			if (H_binded && message[0] == 'H') {
+			if (!H_binded && message[0] == 'H') {
 				m_Hydrogen = server_socket;
 				H_binded = true;
 			}
-			else if (O_binded && message[0] == 'O') {
+			else if (!O_binded && message[0] == 'O') {
 				m_Oxygen = server_socket;
 				O_binded = true;
 			}
