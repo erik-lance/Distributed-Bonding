@@ -66,6 +66,9 @@ void Server::start()
 	m_listenThread = std::thread(&Server::listener, this);
 	m_processorThread = std::thread(&Server::processor, this);
 
+	// Bonding done on main thread
+	bonding();
+
 	// Wait for the listener thread to finish
 	m_listenThread.join();
 	m_processorThread.join();
@@ -205,23 +208,25 @@ void Server::bonding(){
 	while (isRunning) {
 		if (hydrogen.size() >= 2 && !oxygen.empty()) {
 
-			std::string h1 = hydrogen.front();
+			std::string h1 = hydrogen.front() + " bonded";
 			hydrogen.pop();
-			std::string h2 = hydrogen.front();
+			std::string h2 = hydrogen.front() + " bonded";
 			hydrogen.pop();
 
-			std::string o = oxygen.front();
+			std::string o = oxygen.front() + " bonded";
 			oxygen.pop();
 
-			std::cout << h1 << "bonded" << std::endl;
-			std::cout << h2 << "bonded" << std::endl;
-			std::cout << o << "bonded" << std::endl;
+			std::cout << h1 << std::endl;
+			std::cout << h2 << std::endl;
+			std::cout << o << std::endl;
 			H20_bonded++;
 
 			//sends message to client
+			send_mtx.lock();
 			send_queue.push(h1);
 			send_queue.push(h2);
 			send_queue.push(o);
+			send_mtx.unlock();
 		}
 	}
 }
