@@ -144,7 +144,7 @@ void Server::processor()
 			message_queue.pop();
 
 			// Message is in the format "Hydrogen:1 Request" or "Oxygen:1 Request" Removes " Request"
-			message.erase(message.find(" Request"));
+			message = message.substr(0, message.find(" Request"));
 
 			// Process the message
 			if (message[0] == 'H') {
