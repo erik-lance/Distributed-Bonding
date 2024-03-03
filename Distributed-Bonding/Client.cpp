@@ -78,6 +78,7 @@ void Client::run()
 		// (H0 Request / O0 Request)
 		// m_type+m_number+" Request"
 		std::string message = m_type + std::to_string(m_number) + " Request";
+		//std::cout << message << std::endl;
 		int sent = send(m_socket, message.c_str(), message.size() + 1, 0);
 
 		if (sent < 0)
@@ -85,6 +86,16 @@ void Client::run()
 			std::cerr << "Error sending message to server" << std::endl;
 			exit(1);
 		}
+	}
+
+	// Send "Done" to the server
+	std::string message = "Done";
+	int sent = send(m_socket, message.c_str(), message.size() + 1, 0);
+
+	if (sent < 0)
+	{
+		std::cerr << "Error sending message to server" << std::endl;
+		exit(1);
 	}
 
 	// Wait until the server is done
