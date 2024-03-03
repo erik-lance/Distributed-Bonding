@@ -4,7 +4,7 @@
 #include <iostream>
 
 // Master Server
-std::string MASTER_HOST = "127:0.0.1";
+std::string MASTER_HOST = "127.0.0.1";
 int MASTER_PORT = 5000;
 
 int main()
