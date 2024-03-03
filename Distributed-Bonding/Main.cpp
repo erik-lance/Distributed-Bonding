@@ -17,7 +17,6 @@ int main()
 	if (machineType == 1)
 	{
 		Server server(MASTER_HOST, MASTER_PORT);
-		server.start();
 	}
 	else
 	{
