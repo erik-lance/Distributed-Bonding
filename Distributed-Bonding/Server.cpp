@@ -237,8 +237,10 @@ void Server::notify_clients()
 {
 	while (isRunning) {
 		if (!send_queue.empty()) {
+			send_mtx.lock();
 			std::string message = send_queue.front();
 			send_queue.pop();
+			send_mtx.unlock();
 
 			if (message[0] == 'H') {
 				int sent = send(m_Hydrogen, message.c_str(), message.size(), 0);

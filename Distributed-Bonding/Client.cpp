@@ -131,6 +131,6 @@ void Client::listener()
 			break;
 		}
 
-		std::cout << std::string(buffer, bytesReceived) << " bonded" << std::endl;
+		std::cout << std::string(buffer, bytesReceived) << std::endl;
 	}
 }
