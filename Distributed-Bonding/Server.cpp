@@ -228,11 +228,6 @@ void Server::bonding(){
 			send_queue.push(h2);
 			send_queue.push(o);
 			send_mtx.unlock();
-
-			if (H20_bonded == 500) {
-				isRunning = false;
-				send_queue.push("Done");
-			}
 		}
 	}
 }
@@ -258,8 +253,8 @@ void Server::notify_clients()
 			}
 		}
 
-		// If H20 bonded is 1000, then we are done
-		if (H20_bonded == 1000) {
+		// If H20 bonded is 500, then we are done
+		if (H20_bonded == 500) {
 			isRunning = false;
 			std::string message = "Done";
 			int sent = send(m_Hydrogen, message.c_str(), message.size(), 0);
