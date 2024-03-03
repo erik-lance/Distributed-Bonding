@@ -68,6 +68,9 @@ void Client::run()
 
 	char m_type = isHydrogen ? 'H' : 'O';
 
+	// Start timer
+	auto start = std::chrono::high_resolution_clock::now();
+
 	// Send molecules to the server
 	for (int i = 0; i < molecules; i++)
 	{
@@ -87,6 +90,13 @@ void Client::run()
 	// Wait until the server is done
 	// Join the thread
 	m_thread.join();
+
+	// Stop timer
+	auto end = std::chrono::high_resolution_clock::now();
+
+	// Calculate the time taken
+	std::chrono::duration<double> time_taken = end - start;
+	std::cout << "Time taken: " << time_taken.count() << "s" << std::endl;
 }
 
 /**
@@ -131,6 +141,13 @@ void Client::listener()
 			break;
 		}
 
+		// If message is "Done", then stop the listener
+		if (std::string(buffer, 0, bytesReceived) == "Done")
+		{
+			isRunning = false;
+			break;
+		}
 		std::cout << std::string(buffer, bytesReceived) << std::endl;
+
 	}
 }

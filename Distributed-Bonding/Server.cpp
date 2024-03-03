@@ -253,5 +253,13 @@ void Server::notify_clients()
 				std::cerr << "Invalid message to send: " << message << std::endl;
 			}
 		}
+
+		// If H20 bonded is 1000, then we are done
+		if (H20_bonded == 1000) {
+			isRunning = false;
+			std::string message = "Done";
+			int sent = send(m_Hydrogen, message.c_str(), message.size(), 0);
+			sent = send(m_Oxygen, message.c_str(), message.size(), 0);
+		}
 	}
 }
