@@ -36,7 +36,8 @@ private:
 	SOCKET m_Oxygen;
 	boolean H_binded;
 	boolean O_binded;
-	int H20_bonded = 0;
+	int receivedMolecule[2] = { 0, 0 };
+	int H2O_bonded = 0;
 
 	std::vector<SOCKET> connected_clients;
 	std::vector<bool> socket_done = std::vector<bool>(2, false);
@@ -53,6 +54,7 @@ private:
 	std::queue<std::string> oxygen;
 	std::mutex mtx;
 	std::mutex send_mtx;
+	std::mutex log_mtx;
 
 	bool isRunning = false;
 	void listener();

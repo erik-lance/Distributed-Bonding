@@ -6,7 +6,7 @@ Server::Server(std::string hostname, int portNum)
 	this->port = portNum;
 	H_binded = false;
 	O_binded = false;
-	H20_bonded = 0;
+
 	// Setup Winsock
 	#ifdef _WIN32
 		WSADATA wsa_data;
@@ -119,9 +119,6 @@ void Server::listener()
 				#endif
 			}
 
-			// Hydrogen molecule: "H:#Request Number" (e.g. "H: 1")
-			// Oxygen molecule: "O:#Request Number" (e.g. "O: 1")
-
 			//Add message to queue
 
 			// Check if message is fragmented or not by looking
@@ -161,13 +158,14 @@ void Server::listener()
 
 				// Push 
 				for (std::string msg : split_messages) { 
-					if (msg[0] != 'H' && msg[0] != 'O') {
-						// Message is Done
-						socket_done[i] = true;
+					// Received "Done" message
+					if (msg[0] != 'H' && msg[0] != 'O') { socket_done[i] = true; }
+					else { 
+						std:: cout << msg << std::endl; 
+						receivedMolecule[i]++;
 					}
 
 					mtx.lock();
-					std::cout << msg << std::endl;
 					message_queue.push(msg);
 					mtx.unlock();
 				}
@@ -218,18 +216,18 @@ void Server::bonding(){
 
 			std::string h1 = hydrogen.front() + ", bonded, " + time_str;
 			hydrogen.pop();
+
 			std::string h2 = hydrogen.front() + ", bonded, " + time_str;
 			hydrogen.pop();
 
 			std::string o = oxygen.front() + ", bonded, " + time_str;
 			oxygen.pop();
 
+			//sends message to client
 			std::cout << h1 << std::endl;
 			std::cout << h2 << std::endl;
 			std::cout << o << std::endl;
-			H20_bonded++;
 
-			//sends message to client
 			send_mtx.lock();
 			send_queue.push(h1);
 			send_queue.push(h2);
@@ -254,14 +252,15 @@ void Server::notify_clients()
 			}
 			else if (message[0] == 'O') {
 				int sent = send(m_Oxygen, message.c_str(), message.size(), 0);
+				H2O_bonded++;
 			}
 			else {
 				std::cerr << "Invalid message to send: " << message << std::endl;
 			}
 		}
 
-		// If H20 bonded is 500, then we are done
-		if (H20_bonded == 500) {
+		// If both clients are done, then we are done
+		if (socket_done[0] && socket_done[1] && H2O_bonded == abs(receivedMolecule[0] - receivedMolecule[1])) {
 			isRunning = false;
 			std::string message = "Done";
 			int sent = send(m_Hydrogen, message.c_str(), message.size(), 0);
