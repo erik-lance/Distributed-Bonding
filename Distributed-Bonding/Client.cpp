@@ -129,15 +129,17 @@ void Client::run()
  */
 void Client::prepareMolecules(int type)
 {
+	//ask client for the number of molecules
+	std::cout << "Enter the number of molecules: ";
+	std::cin >> molecules;
+
 	if (type == 0)
 	{
 		this->isHydrogen = true;
-		molecules = 1000;
 	}
 	else
 	{
 		this->isHydrogen = false;
-		molecules = 500;
 	}
 }
 
