@@ -191,17 +191,9 @@ void Server::processor()
 			message = message.substr(0, message.find(", request"));
 
 			// Process the message
-			if (message[0] == 'H') {
-				std::cout << message << " Requesting bond" << std::endl;
-				hydrogen.push(message);
-			}
-			else if (message[0] == 'O') {
-				std::cout << message << " Requesting bond" << std::endl;
-				oxygen.push(message);
-			}
-			else {
-				std::cerr << "Invalid message received: " << message << std::endl;
-			}
+			if (message[0] == 'H') { hydrogen.push(message); }
+			else if (message[0] == 'O') { oxygen.push(message); }
+			else { std::cerr << "Invalid message received: " << message << std::endl; }
 		}
 	}
 }
