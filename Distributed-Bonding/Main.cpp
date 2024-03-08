@@ -28,10 +28,10 @@ int main()
 		client.run();
 	}
 
-	// Ask user to press enter to exit
+	// Ask user to press any key to exit
 	std::cout << "Press any key to exit" << std::endl;
 	char c;
-	std::cin >> c;
+	std::cin.get(c);
 
 	return 0;
 }
