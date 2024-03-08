@@ -51,6 +51,11 @@ Server::Server(std::string hostname, int portNum)
 	std::cout << "Server waiting for 1 more connection" << std::endl;
 	connected_clients.push_back(accept(m_socket, NULL, NULL));
 
+	// Start clients by sending "START"
+	std::string message = "STARTBOND";
+	int sent = send(connected_clients[0], message.c_str(), message.size(), 0);
+	sent = send(connected_clients[1], message.c_str(), message.size(), 0);
+
 	start();
 }
 

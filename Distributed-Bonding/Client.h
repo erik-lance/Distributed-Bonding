@@ -6,6 +6,7 @@
 #include <queue>
 #include <vector>
 #include <thread>
+#include <mutex>
 
 #ifdef _WIN32
 #include <WinSock2.h>
@@ -40,6 +41,10 @@ private:
 
 	bool isRunning = false;
 	std::thread m_thread;
+
+	std::mutex mtx;
+	std::condition_variable cv;
+	bool isReady = false;
 
 	void prepareMolecules(int type);
 	void listener();

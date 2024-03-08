@@ -61,12 +61,15 @@ void Client::run()
 	// Start the listener thread
 	m_thread = std::thread(&Client::listener, this);
 
-	std::cout << "\nBegin requesting data from server" << std::endl;
 	std::string molecule_type = isHydrogen ? "Hydrogen" : "Oxygen";
+	char m_type = isHydrogen ? 'H' : 'O';
+
+	// Wait for server to send "STARTBOND"
+	std::cout << "Waiting for other client..." << std::endl;
+	std::unique_lock<std::mutex> lck(mtx);
+	cv.wait(lck, [this] { return isReady; });
 
 	std::cout << "Moleceule Type: " << molecule_type << std::endl;
-
-	char m_type = isHydrogen ? 'H' : 'O';
 
 	// Start timer
 	auto start = std::chrono::high_resolution_clock::now();
@@ -86,7 +89,7 @@ void Client::run()
 		char time_str[20]; // Enough space to hold "YYYY-MM-DD HH:MM:SS\0"
 		strftime(time_str, sizeof(time_str), "%Y-%m-%d %H:%M:%S", &local_time);
 
-		std::string message = m_type + std::to_string(m_number) + ", request," + time_str;
+		std::string message = m_type + std::to_string(m_number) + ", request, " + time_str;
 
 		//std::cout << message << std::endl;
 		int sent = send(m_socket, message.c_str(), message.size() + 1, 0);
@@ -172,6 +175,12 @@ void Client::listener()
 		{
 			isRunning = false;
 			break;
+		}
+		else if (std::string(buffer, 0, bytesReceived) == "STARTBOND") {
+			std::cout << "\nBegin requesting data from server" << std::endl;
+			isReady = true;
+			cv.notify_one();
+			continue;
 		}
 		std::cout << std::string(buffer, bytesReceived) << std::endl;
 
