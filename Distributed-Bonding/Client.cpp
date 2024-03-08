@@ -76,8 +76,18 @@ void Client::run()
 	{
 		int m_number = i + 1;
 		// (H0 Request / O0 Request)
-		// m_type+m_number+" Request"
-		std::string message = m_type + std::to_string(m_number) + " Request";
+		// m_type+m_number+" Request"+timestamp
+		// Timestamp is YYYY-MM-DD HH:MM:SS
+		std::chrono::system_clock::time_point current_time = std::chrono::system_clock::now();
+		std::time_t timestamp = std::chrono::system_clock::to_time_t(current_time);
+		struct tm local_time;
+		localtime_s(&local_time, &timestamp);
+
+		char time_str[20]; // Enough space to hold "YYYY-MM-DD HH:MM:SS\0"
+		strftime(time_str, sizeof(time_str), "%Y-%m-%d %H:%M:%S", &local_time);
+
+		std::string message = m_type + std::to_string(m_number) + ", request," + time_str;
+
 		//std::cout << message << std::endl;
 		int sent = send(m_socket, message.c_str(), message.size() + 1, 0);
 
@@ -86,6 +96,9 @@ void Client::run()
 			std::cerr << "Error sending message to server" << std::endl;
 			exit(1);
 		}
+
+		// Print Sent message
+		std::cout << message << std::endl;
 	}
 
 	// Send "Done" to the server

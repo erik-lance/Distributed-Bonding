@@ -186,8 +186,9 @@ void Server::processor()
 			message_queue.pop();
 			mtx.unlock();
 
-			// Message is in the format "Hydrogen:1 Request" or "Oxygen:1 Request" Removes " Request"
-			message = message.substr(0, message.find(" Request"));
+			// Message is in the format "M#, request, timestamp"
+			// e.g.: "H5, request, 2024-03-08 12:00:00"
+			message = message.substr(0, message.find(", request"));
 
 			// Process the message
 			if (message[0] == 'H') {
@@ -209,12 +210,21 @@ void Server::bonding(){
 	while (isRunning) {
 		if (hydrogen.size() >= 2 && !oxygen.empty()) {
 
-			std::string h1 = hydrogen.front() + " bonded";
+			// Timestamp
+			std::chrono::system_clock::time_point current_time = std::chrono::system_clock::now();
+			std::time_t timestamp = std::chrono::system_clock::to_time_t(current_time);
+			struct tm local_time;
+			localtime_s(&local_time, &timestamp);
+
+			char time_str[20]; // Enough space to hold "YYYY-MM-DD HH:MM:SS\0"
+			strftime(time_str, sizeof(time_str), "%Y-%m-%d %H:%M:%S", &local_time);
+
+			std::string h1 = hydrogen.front() + ", bonded, " + time_str;
 			hydrogen.pop();
-			std::string h2 = hydrogen.front() + " bonded";
+			std::string h2 = hydrogen.front() + ", bonded, " + time_str;
 			hydrogen.pop();
 
-			std::string o = oxygen.front() + " bonded";
+			std::string o = oxygen.front() + ", bonded, " + time_str;
 			oxygen.pop();
 
 			std::cout << h1 << std::endl;
