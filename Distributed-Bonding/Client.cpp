@@ -4,15 +4,15 @@ Client::Client(int type)
 {
 	prepareMolecules(type);
 
-	// Setup Winsock
-	#ifdef _WIN32
-		WSADATA wsa_data;
-		if (WSAStartup(MAKEWORD(2, 2), &wsa_data) != 0)
-		{
-			std::cerr << "Error initializing Winsock" << std::endl;
-			exit(1);
-		}
-	#endif
+// Setup Winsock
+#ifdef _WIN32
+	WSADATA wsa_data;
+	if (WSAStartup(MAKEWORD(2, 2), &wsa_data) != 0)
+	{
+		std::cerr << "Error initializing Winsock" << std::endl;
+		exit(1);
+	}
+#endif
 }
 
 Client::~Client()
@@ -67,9 +67,10 @@ void Client::run()
 	// Wait for server to send "STARTBOND"
 	std::cout << "Waiting for other client..." << std::endl;
 	std::unique_lock<std::mutex> lck(mtx);
-	cv.wait(lck, [this] { return isReady; });
+	cv.wait(lck, [this]
+			{ return isReady; });
 
-	std::cout << "Moleceule Type: " << molecule_type << std::endl;
+	std::cout << "Molecule Type: " << molecule_type << std::endl;
 
 	// Start timer
 	auto start = std::chrono::high_resolution_clock::now();
@@ -91,7 +92,7 @@ void Client::run()
 
 		std::string message = m_type + std::to_string(m_number) + ", request, " + time_str;
 
-		//std::cout << message << std::endl;
+		// std::cout << message << std::endl;
 		int sent = send(m_socket, message.c_str(), message.size() + 1, 0);
 
 		if (sent < 0)
@@ -132,7 +133,7 @@ void Client::run()
  */
 void Client::prepareMolecules(int type)
 {
-	//ask client for the number of molecules
+	// ask client for the number of molecules
 	std::cout << "Enter the number of molecules: ";
 	std::cin >> molecules;
 
@@ -176,13 +177,13 @@ void Client::listener()
 			isRunning = false;
 			break;
 		}
-		else if (std::string(buffer, 0, bytesReceived) == "STARTBOND") {
+		else if (std::string(buffer, 0, bytesReceived) == "STARTBOND")
+		{
 			std::cout << "\nBegin requesting data from server" << std::endl;
 			isReady = true;
 			cv.notify_one();
 			continue;
 		}
 		std::cout << std::string(buffer, bytesReceived) << std::endl;
-
 	}
 }
