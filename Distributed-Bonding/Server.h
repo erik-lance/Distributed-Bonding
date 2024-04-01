@@ -27,6 +27,7 @@ public:
 	~Server();
 
 	void start();
+
 private:
 	SOCKET m_socket;
 	sockaddr_in m_addr;
@@ -36,7 +37,7 @@ private:
 	SOCKET m_Oxygen;
 	boolean H_binded;
 	boolean O_binded;
-	int receivedMolecule[2] = { 0, 0 };
+	int receivedMolecule[2] = {0, 0};
 	int H2O_bonded = 0;
 
 	std::vector<SOCKET> connected_clients;
@@ -56,10 +57,12 @@ private:
 	std::mutex send_mtx;
 	std::mutex log_mtx;
 
+	// Sanity check
+	std::queue<std::string> bonded_molecules;
+
 	bool isRunning = false;
 	void listener();
 	void processor();
 	void bonding();
 	void notify_clients();
 };
-
