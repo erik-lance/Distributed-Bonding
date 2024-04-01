@@ -20,13 +20,15 @@
 #include <fcntl.h>
 #endif
 
-class Client {
+class Client
+{
 public:
 	Client(int m_type);
 	~Client();
 
 	void init(std::string host, int port);
 	void run();
+
 private:
 	SOCKET m_socket;
 	sockaddr_in m_addr;
@@ -38,6 +40,9 @@ private:
 	// Molecules
 	int molecules = 0;
 	bool isHydrogen = false;
+
+	// Sanity check
+	std::vector<bool> bonded_molecules;
 
 	bool isRunning = false;
 	std::thread m_thread;

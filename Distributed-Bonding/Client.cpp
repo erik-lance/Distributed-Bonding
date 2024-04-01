@@ -137,6 +137,8 @@ void Client::prepareMolecules(int type)
 	std::cout << "Enter the number of molecules: ";
 	std::cin >> molecules;
 
+	bonded_molecules = std::vector<bool>(molecules, false);
+
 	if (type == 0)
 	{
 		this->isHydrogen = true;
@@ -174,6 +176,25 @@ void Client::listener()
 		// If message is "Done", then stop the listener
 		if (std::string(buffer, 0, bytesReceived) == "Done")
 		{
+			char m_type = isHydrogen ? 'H' : 'O';
+			std::cout << "Bonded molecules:\n";
+			for (int i = 0; i < bonded_molecules.size(); i++)
+			{
+				if (bonded_molecules[i])
+				{
+					std::cout << m_type << i + 1 << " bonded" << std::endl;
+				}
+			}
+
+			std::cout << "Unbonded molecules:\n";
+			for (int i = 0; i < molecules; i++)
+			{
+				if (!bonded_molecules[i])
+				{
+					std::cout << m_type << i + 1 << std::endl;
+				}
+			}
+
 			isRunning = false;
 			break;
 		}
@@ -184,6 +205,20 @@ void Client::listener()
 			cv.notify_one();
 			continue;
 		}
-		std::cout << std::string(buffer, bytesReceived) << std::endl;
+		// else store the message and print it
+		std::string message = std::string(buffer, 0, bytesReceived);
+		std::cout << message << std::endl;
+
+		// Check if the message is a bond message
+		if (message.find("bonded") != std::string::npos)
+		{
+			// Message is in the format "M#, bonded, timestamp"
+			// e.g.: "H5, bonded, 2024-03-08 12:00:00"
+			// Extract the molecule number
+			int molecule_number = std::stoi(message.substr(1, message.find(",") - 1));
+
+			// Mark the molecule as bonded
+			bonded_molecules[molecule_number - 1] = true;
+		}
 	}
 }
