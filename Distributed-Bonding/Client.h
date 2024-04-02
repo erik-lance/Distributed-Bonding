@@ -37,12 +37,12 @@ private:
 	std::chrono::steady_clock::time_point start;
 	std::chrono::steady_clock::time_point end;
 
-	// Molecules
-	int molecules = 0;
+	// Atoms
+	int atoms = 0;
 	bool isHydrogen = false;
 
 	// Sanity check
-	std::vector<bool> bonded_molecules;
+	std::vector<bool> bonded_atoms;
 
 	bool isRunning = false;
 	std::thread m_thread;
@@ -51,6 +51,6 @@ private:
 	std::condition_variable cv;
 	bool isReady = false;
 
-	void prepareMolecules(int type);
+	void prepareAtoms(int type);
 	void listener();
 };

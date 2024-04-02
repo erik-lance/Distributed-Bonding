@@ -141,7 +141,7 @@ void Server::listener()
 				message = fragments[i] + message;
 			}
 
-			// Remembers the socket for the molecules
+			// Remembers the socket for the atoms
 			// the first message will usually never be fragmented
 			if (!H_binded && message[0] == 'H')
 			{
@@ -260,7 +260,7 @@ void Server::bonding()
 			oxygen.pop();
 
 			std::string bonded_molecule = h1 + "-" + o + "-" + h2 + " bonded";
-			bonded_molecules.push(bonded_molecule);
+			bonded_atoms.push(bonded_molecule);
 
 			// sends message to client
 			std::cout << h1_msg << std::endl;
@@ -310,20 +310,20 @@ void Server::notify_clients()
 			int sent = send(m_Hydrogen, message.c_str(), message.size(), 0);
 			sent = send(m_Oxygen, message.c_str(), message.size(), 0);
 
-			std::cout << "Bonded molecules:\n";
-			while (!bonded_molecules.empty())
+			std::cout << "Bonded atoms:\n";
+			while (!bonded_atoms.empty())
 			{
-				std::cout << bonded_molecules.front() << std::endl;
-				bonded_molecules.pop();
+				std::cout << bonded_atoms.front() << std::endl;
+				bonded_atoms.pop();
 			}
-			std::cout << "Unbonded hydrogen molecules:\n";
+			std::cout << "Unbonded hydrogen atoms:\n";
 			while (!hydrogen.empty())
 			{
 				std::cout << hydrogen.front() << std::endl;
 				hydrogen.pop();
 			}
 
-			std::cout << "Unbonded oxygen molecules:\n";
+			std::cout << "Unbonded oxygen atoms:\n";
 			while (!oxygen.empty())
 			{
 				std::cout << oxygen.front() << std::endl;

@@ -20,10 +20,10 @@ int main()
 	}
 	else
 	{
-		int moleculeType;
-		std::cout << "Enter the molecule type (0 - H, 1 - O): ";
-		std::cin >> moleculeType;
-		Client client(moleculeType);
+		int atomType;
+		std::cout << "Enter the atom type (0 - H, 1 - O): ";
+		std::cin >> atomType;
+		Client client(atomType);
 		client.init(MASTER_HOST, MASTER_PORT);
 		client.run();
 	}

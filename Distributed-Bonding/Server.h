@@ -60,7 +60,7 @@ private:
 	std::mutex log_mtx;
 
 	// Sanity check
-	std::queue<std::string> bonded_molecules;
+	std::queue<std::string> bonded_atoms;
 
 	bool isRunning = false;
 	void listener();

@@ -2,7 +2,7 @@
 
 Client::Client(int type)
 {
-	prepareMolecules(type);
+	prepareAtoms(type);
 
 // Setup Winsock
 #ifdef _WIN32
@@ -61,7 +61,7 @@ void Client::run()
 	// Start the listener thread
 	m_thread = std::thread(&Client::listener, this);
 
-	std::string molecule_type = isHydrogen ? "Hydrogen" : "Oxygen";
+	std::string atom_type = isHydrogen ? "Hydrogen" : "Oxygen";
 	char m_type = isHydrogen ? 'H' : 'O';
 
 	// Wait for server to send "STARTBOND"
@@ -70,13 +70,13 @@ void Client::run()
 	cv.wait(lck, [this]
 			{ return isReady; });
 
-	std::cout << "Molecule Type: " << molecule_type << std::endl;
+	std::cout << "Atom Type: " << atom_type << std::endl;
 
 	// Start timer
 	auto start = std::chrono::high_resolution_clock::now();
 
-	// Send molecules to the server
-	for (int i = 0; i < molecules; i++)
+	// Send atoms to the server
+	for (int i = 0; i < atoms; i++)
 	{
 		int m_number = i + 1;
 		// (H0 Request / O0 Request)
@@ -128,16 +128,16 @@ void Client::run()
 }
 
 /**
- * Prepares the molecules to be sent to the server
+ * Prepares the atoms to be sent to the server
  * @param type 0 for hydrogen, 1 for oxygen
  */
-void Client::prepareMolecules(int type)
+void Client::prepareAtoms(int type)
 {
-	// ask client for the number of molecules
-	std::cout << "Enter the number of molecules: ";
-	std::cin >> molecules;
+	// ask client for the number of atoms
+	std::cout << "Enter the number of atoms: ";
+	std::cin >> atoms;
 
-	bonded_molecules = std::vector<bool>(molecules, false);
+	bonded_atoms = std::vector<bool>(atoms, false);
 
 	if (type == 0)
 	{
@@ -151,7 +151,7 @@ void Client::prepareMolecules(int type)
 
 /**
  * Simply listens to requests from the server so that it can receive messages
- * as it is sending molecules concurrently.
+ * as it is sending atoms concurrently.
  */
 void Client::listener()
 {
@@ -177,19 +177,19 @@ void Client::listener()
 		if (std::string(buffer, 0, bytesReceived) == "Done")
 		{
 			char m_type = isHydrogen ? 'H' : 'O';
-			std::cout << "Bonded molecules:\n";
-			for (int i = 0; i < bonded_molecules.size(); i++)
+			std::cout << "Bonded atoms:\n";
+			for (int i = 0; i < bonded_atoms.size(); i++)
 			{
-				if (bonded_molecules[i])
+				if (bonded_atoms[i])
 				{
 					std::cout << m_type << i + 1 << " bonded" << std::endl;
 				}
 			}
 
-			std::cout << "Unbonded molecules:\n";
-			for (int i = 0; i < molecules; i++)
+			std::cout << "Unbonded atoms:\n";
+			for (int i = 0; i < atoms; i++)
 			{
-				if (!bonded_molecules[i])
+				if (!bonded_atoms[i])
 				{
 					std::cout << m_type << i + 1 << std::endl;
 				}
@@ -218,7 +218,7 @@ void Client::listener()
 			int molecule_number = std::stoi(message.substr(1, message.find(",") - 1));
 
 			// Mark the molecule as bonded
-			bonded_molecules[molecule_number - 1] = true;
+			bonded_atoms[molecule_number - 1] = true;
 		}
 	}
 }
