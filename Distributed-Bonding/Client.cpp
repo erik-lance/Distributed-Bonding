@@ -218,16 +218,28 @@ void Client::listener()
 		std::string message = std::string(buffer, 0, bytesReceived);
 		std::cout << message << std::endl;
 
-		// Check if the message is a bond message
-		if (message.find("bonded") != std::string::npos)
-		{
-			// Message is in the format "M#, bonded, timestamp"
-			// e.g.: "H5, bonded, 2024-03-08 12:00:00"
-			// Extract the molecule number
-			int molecule_number = std::stoi(message.substr(1, message.find(",") - 1));
+		// // Check if the message is a bond message
+		// if (message.find("bonded") != std::string::npos)
+		// {
+		// 	// Message is in the format "M#, bonded, timestamp"
+		// 	// e.g.: "H5, bonded, 2024-03-08 12:00:00"
+		// 	// Extract the molecule number
+		// 	int molecule_number = std::stoi(message.substr(1, message.find(",") - 1));
 
-			// Mark the molecule as bonded
-			std::get<1>(atom_status[molecule_number - 1]) = true;
+		// 	// Mark the molecule as bonded
+		// 	std::get<1>(atom_status[molecule_number - 1]) = true;
+		// }
+		char m_type = isHydrogen ? 'H' : 'O';
+		std::string::size_type start = 0;
+		while ((start = message.find(m_type, start)) != std::string::npos)
+		{
+			std::string::size_type end = message.find(",", start);
+			if (end != std::string::npos)
+			{
+				int molecule_number = std::stoi(message.substr(start + 1, end - start - 1));
+				std::get<1>(atom_status[molecule_number - 1]) = true;
+			}
+			start = end;
 		}
 	}
 }
