@@ -307,6 +307,12 @@ void Server::notify_clients()
 		{
 			isRunning = false;
 			std::string message = "Done";
+
+			// Time taken
+			std::chrono::system_clock::time_point endTime = std::chrono::system_clock::now();
+			std::chrono::duration<double> time_taken = endTime - startTime;
+			std::cout << "Time taken: " << time_taken.count() << "s" << std::endl;
+
 			int sent = send(m_Hydrogen, message.c_str(), message.size(), 0);
 			sent = send(m_Oxygen, message.c_str(), message.size(), 0);
 
@@ -330,10 +336,7 @@ void Server::notify_clients()
 				oxygen.pop();
 			}
 
-			// Time taken
-			std::chrono::system_clock::time_point endTime = std::chrono::system_clock::now();
-			std::chrono::duration<double> time_taken = endTime - startTime;
-			std::cout << "Time taken: " << time_taken.count() << "s" << std::endl;
+			
 		}
 	}
 }
