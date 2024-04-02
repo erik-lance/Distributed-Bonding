@@ -29,6 +29,8 @@ public:
 	void start();
 
 private:
+	std::chrono::system_clock::time_point startTime;
+
 	SOCKET m_socket;
 	sockaddr_in m_addr;
 	std::string host;

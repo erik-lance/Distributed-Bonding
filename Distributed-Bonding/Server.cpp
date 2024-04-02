@@ -56,6 +56,7 @@ Server::Server(std::string hostname, int portNum)
 	int sent = send(connected_clients[0], message.c_str(), message.size(), 0);
 	sent = send(connected_clients[1], message.c_str(), message.size(), 0);
 
+	startTime = std::chrono::system_clock::now(); // Start Timing
 	start();
 }
 
@@ -328,6 +329,11 @@ void Server::notify_clients()
 				std::cout << oxygen.front() << std::endl;
 				oxygen.pop();
 			}
+
+			// Time taken
+			std::chrono::system_clock::time_point endTime = std::chrono::system_clock::now();
+			std::chrono::duration<double> time_taken = endTime - startTime;
+			std::cout << "Time taken: " << time_taken.count() << "s" << std::endl;
 		}
 	}
 }
