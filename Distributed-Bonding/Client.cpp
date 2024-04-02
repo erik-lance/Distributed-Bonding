@@ -101,6 +101,9 @@ void Client::run()
 			exit(1);
 		}
 
+		// Update atom_status to indicate that the atom has been requested
+		std::get<0>(atom_status[i]) = true;
+
 		// Print Sent message
 		std::cout << message << std::endl;
 	}
@@ -125,6 +128,31 @@ void Client::run()
 	// Calculate the time taken
 	std::chrono::duration<double> time_taken = end - start;
 	std::cout << "Time taken: " << time_taken.count() << "s" << std::endl;
+
+	// Sanity check
+	std::cout << "Checking request and bond:\n";
+	for (int i = 0; i < atom_status.size(); i++)
+	{
+		bool requested = std::get<0>(atom_status[i]);
+		bool bonded = std::get<1>(atom_status[i]);
+
+		if (requested && bonded)
+		{
+			std::cout << m_type << i + 1 << " passed" << std::endl;
+		}
+		else if (!requested && bonded)
+		{
+			std::cout << m_type << i + 1 << " failed (bonded before request)" << std::endl;
+		}
+		else if (requested && !bonded)
+		{
+			std::cout << m_type << i + 1 << " failed (requested but not bonded)" << std::endl;
+		}
+		else
+		{
+			std::cout << m_type << i + 1 << " failed (no request or bond)" << std::endl;
+		}
+	}
 }
 
 /**
@@ -137,7 +165,7 @@ void Client::prepareAtoms(int type)
 	std::cout << "Enter the number of atoms: ";
 	std::cin >> atoms;
 
-	bonded_atoms = std::vector<bool>(atoms, false);
+	atom_status = std::vector<std::tuple<bool, bool>>(atoms, std::make_tuple(false, false));
 
 	if (type == 0)
 	{
@@ -176,25 +204,6 @@ void Client::listener()
 		// If message is "Done", then stop the listener
 		if (std::string(buffer, 0, bytesReceived) == "Done")
 		{
-			char m_type = isHydrogen ? 'H' : 'O';
-			std::cout << "Bonded atoms:\n";
-			for (int i = 0; i < bonded_atoms.size(); i++)
-			{
-				if (bonded_atoms[i])
-				{
-					std::cout << m_type << i + 1 << " bonded" << std::endl;
-				}
-			}
-
-			std::cout << "Unbonded atoms:\n";
-			for (int i = 0; i < atoms; i++)
-			{
-				if (!bonded_atoms[i])
-				{
-					std::cout << m_type << i + 1 << std::endl;
-				}
-			}
-
 			isRunning = false;
 			break;
 		}
@@ -218,7 +227,7 @@ void Client::listener()
 			int molecule_number = std::stoi(message.substr(1, message.find(",") - 1));
 
 			// Mark the molecule as bonded
-			bonded_atoms[molecule_number - 1] = true;
+			std::get<1>(atom_status[molecule_number - 1]) = true;
 		}
 	}
 }

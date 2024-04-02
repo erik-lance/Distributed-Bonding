@@ -42,7 +42,7 @@ private:
 	bool isHydrogen = false;
 
 	// Sanity check
-	std::vector<bool> bonded_atoms;
+	std::vector<std::tuple<bool, bool>> atom_status;
 
 	bool isRunning = false;
 	std::thread m_thread;
